@@ -25,8 +25,8 @@ Example Graph:
 See either of the `lcs.*.fio` files to view all the config settings and documentation on all of the settings and alternative options.
 
 ### Requirements
-- fio 2.1.x+
+- [fio 2.1.x+](https://github.com/axboe/fio)
 - fio_generate_plots/gnuplot (optional)
 
-### Extra
+### Extras
 Special thanks to [@tobert](https://github.com/tobert/) for his Cassandra fio configuration examples used as the starter for this project.
