@@ -10,6 +10,9 @@ Each individual test can be run manually using `fio {fioFile}` or through the `f
 - `fio_runner.sh 64k`
 - `fio_runner.sh lcs`
 - `fio_runner.sh stcs`
+- `fio_runner.sh all`
+
+If fio is manually compiled and is not in the default bin directories the path to the binary can be passed in the second argument. Example: `fio_runner.sh all /opt/fio/fio`
 
 All data files are written to the local `./data` directory and after each run are auto-deleted to avoid space usage.    Fio output logs are saved to the `./logs` directory.  Run outputs are saved to the local `./reports` directory.
 
