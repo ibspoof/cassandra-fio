@@ -29,40 +29,49 @@ case $1 in
         echo 'Only running LCS fio tests...'
         LS_CMD="lcs*.fio"
         ;;
+    all)
+        echo 'Running all *.fio tests...'
+        LS_CMD="*.fio"
+        ;;
     *)
-        echo "Running all fio tests..."
+        echo "Running all *.fio tests..."
         LS_CMD="*.fio"
 esac
 
+FIO_BIN=fio
+if [ "${2}x" != "x" ]; then
+    FIO_BIN=${2}
+fi
+
 FIOS_LIST=$(ls ${LS_CMD})
 NOW_EPOCH=$(date +"%s")
-LOG_DIR_READS=$LOG_DIR/reads
-LOG_DIR_WRITES=$LOG_DIR/writes
+LOG_DIR_READS=${LOG_DIR}/reads
+LOG_DIR_WRITES=${LOG_DIR}/writes
 
 # create required directories
-mkdir -p $DATA_DIR
+mkdir -p ${DATA_DIR}
 
-if [ -d "$REPORT_DIR" ]; then
+if [ -d "${REPORT_DIR}" ]; then
     echo "Report directory exists, archiving using current timestamp: ${NOW_EPOCH}"
-    mv $REPORT_DIR ${REPORT_DIR}_${NOW_EPOCH}
+    mv ${REPORT_DIR} ${REPORT_DIR}_${NOW_EPOCH}
 fi
-mkdir -p $REPORT_DIR
+mkdir -p ${REPORT_DIR}
 
-if [ -d "$LOG_DIR" ]; then
+if [ -d "${LOG_DIR}" ]; then
     echo "Log directory exists, archiving using current timestamp: ${NOW_EPOCH}"
-    mv $LOG_DIR ${LOG_DIR}_${NOW_EPOCH}
+    mv ${LOG_DIR} ${LOG_DIR}_${NOW_EPOCH}
 fi
-mkdir -p $LOG_DIR_WRITES
-mkdir -p $LOG_DIR_READS
+mkdir -p ${LOG_DIR_WRITES}
+mkdir -p ${LOG_DIR_READS}
 
 # run all fios in sequential order
-for i in $(echo $FIOS_LIST | tr " " "\n")
+for i in $(echo ${FIOS_LIST} | tr " " "\n")
 do
-    echo "Starting fio test ${i}..."
-    fio ./${i} --output $REPORT_DIR/${i}.out
+    echo "\nStarting fio test ${i}..."
+    ${FIO_BIN} ./${i} --output ${REPORT_DIR}/${i}.out
 
-    mv *read*.log $LOG_DIR_READS/
-    mv *write*.log $LOG_DIR_WRITES/
+    mv *read*.log ${LOG_DIR_READS}/
+    mv *write*.log ${LOG_DIR_WRITES}/
 
     rm -f data/*   # delete created fio files after each run
 
@@ -74,9 +83,9 @@ if type "fio_generate_plots" > /dev/null; then
 
     echo "fio_generate_plots is installed generating svg reports based on fio logs"
 
-    ( cd $LOG_DIR_READS && fio_generate_plots "All-Reads" )
-    ( cd $LOG_DIR_WRITES && fio_generate_plots "All-Writes" )
+    ( cd ${LOG_DIR_READS} && fio_generate_plots "All-Reads" )
+    ( cd ${LOG_DIR_WRITES} && fio_generate_plots "All-Writes" )
 
-    mv $LOG_DIR_READS/*.svg $REPORT_DIR/
-    mv $LOG_DIR_WRITES/*.svg $REPORT_DIR/
+    mv ${LOG_DIR_READS}/*.svg ${REPORT_DIR}/
+    mv ${LOG_DIR_WRITES}/*.svg ${REPORT_DIR}/
 fi
