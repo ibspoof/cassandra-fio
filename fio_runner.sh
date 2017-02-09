@@ -67,7 +67,7 @@ mkdir -p ${LOG_DIR_READS}
 # run all fios in sequential order
 for i in $(echo ${FIOS_LIST} | tr " " "\n")
 do
-    echo "\nStarting fio test ${i}..."
+    echo -e "\nStarting fio test ${i}..."
     ${FIO_BIN} ./${i} --output ${REPORT_DIR}/${i}.out
 
     mv *read*.log ${LOG_DIR_READS}/
@@ -79,12 +79,12 @@ do
 done
 
 # plot reports to svg
-if type "fio_generate_plots" > /dev/null; then
+if type "fio_generate_plots" > /dev/null && type "gnuplot" > /dev/null; then
 
     echo "fio_generate_plots is installed generating svg reports based on fio logs"
 
-    ( cd ${LOG_DIR_READS} && fio_generate_plots "All-Reads" )
-    ( cd ${LOG_DIR_WRITES} && fio_generate_plots "All-Writes" )
+    ( cd ${LOG_DIR_READS} && for f in *.log; do mv $f ${f/.[1-3]/}; done && fio_generate_plots "All-Reads" )
+    ( cd ${LOG_DIR_WRITES} && for f in *.log; do mv $f ${f/.[1-3]/}; done && fio_generate_plots "All-Writes" )
 
     mv ${LOG_DIR_READS}/*.svg ${REPORT_DIR}/
     mv ${LOG_DIR_WRITES}/*.svg ${REPORT_DIR}/
