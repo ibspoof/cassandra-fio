@@ -83,8 +83,8 @@ if type "fio_generate_plots" > /dev/null && type "gnuplot" > /dev/null; then
 
     echo "fio_generate_plots is installed generating svg reports based on fio logs"
 
-    ( cd ${LOG_DIR_READS} && for f in *.log; do mv $f ${f/.[1-3]/}; done && fio_generate_plots "All-Reads" )
-    ( cd ${LOG_DIR_WRITES} && for f in *.log; do mv $f ${f/.[1-3]/}; done && fio_generate_plots "All-Writes" )
+    ( cd ${LOG_DIR_READS} && rename 's/\.[0-9]+\.log/\.log/' ./* && fio_generate_plots "All-Reads" )
+    ( cd ${LOG_DIR_WRITES} && rename 's/\.[0-9]+\.log/\.log/' ./* && fio_generate_plots "All-Writes" )
 
     mv ${LOG_DIR_READS}/*.svg ${REPORT_DIR}/
     mv ${LOG_DIR_WRITES}/*.svg ${REPORT_DIR}/
